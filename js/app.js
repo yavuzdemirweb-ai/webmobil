@@ -1,15 +1,24 @@
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then((registration) => {
-      console.log('SW kaydedildi:', registration.scope);
-      setInterval(() => {
-        registration.update();
-      }, 10000);
+  window.addEventListener('load', async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (const reg of registrations) {
+      await reg.unregister();
+    }
+    const cacheNames = await caches.keys();
+    for (const name of cacheNames) {
+      await caches.delete(name);
+    }
+    console.log('Eski SW ve cache temizlendi');
+
+    let registration;
+    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then((reg) => {
+      registration = reg;
+      console.log('Yeni SW kaydedildi:', registration.scope);
+
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            console.log('Yeni sürüm bulundu, yenileniyor...');
             window.location.reload();
           }
         });
@@ -17,6 +26,12 @@ if ('serviceWorker' in navigator) {
     }).catch((error) => {
       console.log('SW kaydı başarısız:', error);
     });
+
+    setInterval(async () => {
+      if (registration) {
+        await registration.update();
+      }
+    }, 5000);
   });
 }
 

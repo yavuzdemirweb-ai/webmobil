@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hosgeldiniz-pwa-v2';
+const CACHE_NAME = 'hosgeldiniz-pwa-v' + Date.now();
 const ASSETS = [
   '/',
   '/index.html',
@@ -22,7 +22,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name))
+        cacheNames.map((name) => caches.delete(name))
       );
     })
   );
@@ -30,8 +30,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).then((response) => {
@@ -48,16 +46,14 @@ self.addEventListener('fetch', (event) => {
     );
   } else {
     event.respondWith(
-      caches.match(event.request).then((cached) => {
-        return cached || fetch(event.request).then((response) => {
-          if (response.status === 200 && response.type === 'basic') {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, clone);
-            });
-          }
-          return response;
-        });
+      fetch(event.request).then((response) => {
+        if (response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, clone);
+          });
+        }
+        return response;
       }).catch(() => {
         return caches.match(event.request);
       })
