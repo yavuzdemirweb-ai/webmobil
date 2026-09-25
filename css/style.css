@@ -55,6 +55,7 @@ p {
   border-radius: 30px;
   cursor: pointer;
   transition: background 0.3s;
+  display: inline-block;
 }
 
 .btn:hover {
