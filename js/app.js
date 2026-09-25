@@ -27,6 +27,13 @@ window.addEventListener('beforeinstallprompt', (e) => {
   if (installBtn) installBtn.style.display = 'inline-block';
 });
 
+setTimeout(() => {
+  if (installBtn && installBtn.style.display === 'none') {
+    installBtn.style.display = 'inline-block';
+    installBtn.textContent = 'Uygulamayı Kur';
+  }
+}, 3000);
+
 if (installBtn) {
   installBtn.addEventListener('click', async () => {
     if (deferredPrompt) {
@@ -35,6 +42,8 @@ if (installBtn) {
       console.log('Kullanici tercihi:', outcome);
       deferredPrompt = null;
       installBtn.style.display = 'none';
+    } else {
+      alert('Uygulamayı tarayıcı menüsünden "Uygulamayı Kur" seçeneği ile ekleyin.');
     }
   });
 }
