@@ -1,23 +1,3 @@
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    for (const reg of registrations) {
-      await reg.unregister();
-    }
-    const cacheNames = await caches.keys();
-    for (const name of cacheNames) {
-      await caches.delete(name);
-    }
-    console.log('Tüm cache ve SW temizlendi');
-
-    navigator.serviceWorker.register('/sw.js?' + Date.now(), { updateViaCache: 'none' }).then((registration) => {
-      console.log('SW kaydedildi:', registration.scope);
-    }).catch((error) => {
-      console.log('SW kaydı başarısız:', error);
-    });
-  });
-}
-
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
 
