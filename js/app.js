@@ -10,7 +10,7 @@ if ('serviceWorker' in navigator) {
     }
     console.log('Tüm cache ve SW temizlendi');
 
-    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then((registration) => {
+    navigator.serviceWorker.register('/sw.js?' + Date.now(), { updateViaCache: 'none' }).then((registration) => {
       console.log('SW kaydedildi:', registration.scope);
     }).catch((error) => {
       console.log('SW kaydı başarısız:', error);
