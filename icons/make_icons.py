@@ -9,7 +9,7 @@ def create_png(path, w, h, r, g, b):
     for y in range(h):
         raw.append(0)
         for x in range(w):
-            raw += [r, g, b]
+            raw += bytes([r, g, b])
     
     sig = b'\x89PNG\r\n\x1a\n'
     ihdr = chunk('IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0))
